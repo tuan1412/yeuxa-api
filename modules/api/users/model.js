@@ -18,7 +18,7 @@ const userModel = new Schema(
         message: "{VALUE} is not a valid email address!"
       }
     },
-    avatar: { type: Buffer },
+    avatar: { type: Buffer, required: true },
     contentType: { type: String },
     active: { type: Boolean, default: true }
   },

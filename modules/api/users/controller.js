@@ -1,9 +1,16 @@
 const userModel = require("./model");
+const fs = require("fs");
 
-const createUser = ({ username, email, password }) =>
+const createUser = ({ username, email, password, imageFile }) =>
   new Promise((resolve, reject) => {
     userModel
-      .create({ username, email, password })
+      .create({
+        avatar: fs.readFileSync(imageFile.path),
+        contentType: imageFile.mimetype,
+        username,
+        email,
+        password
+      })
       .then(user => resolve(user._id))
       .catch(err => reject(err));
   });

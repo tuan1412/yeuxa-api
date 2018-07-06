@@ -5,6 +5,8 @@ const session = require("express-session");
 const config = require("./config-local.json");
 
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 const imageRouter = require("./modules/api/images/router");
 const userRouter = require("./modules/api/users/router");
@@ -30,17 +32,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  session({
-    secret: config.sessionSecret,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: config.secureCookie,
-      maxAge: 12 * 60 * 60 * 1000
-    }
-  })
-);
+const sessionMiddleware = session({
+  secret: config.sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: config.secureCookie,
+    maxAge: 12 * 60 * 60 * 1000
+  }
+});
+
+app.use(sessionMiddleware);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ extended: false }));
@@ -51,6 +53,10 @@ app.use("/api/users", userRouter);
 
 app.use(express.static('./public'));
 
+io.use(function(socket, next) {
+  sessionMiddleware(socket.request, socket.request.res, next);
+}); 
+
 app.get('/', (req,res) => {
   res.sendFile('./public/index.html');
 });
@@ -60,9 +66,15 @@ mongoose.connect(config.mongoPath, err => {
   else console.log("Database connect successful");
 });
 
-const port = process.env.port || 6969;
+io.on('connection', (socket) => {
+  console.log(socket.id + ' connected');
+  console.log(socket.request.session.userInfo);
 
-app.listen(port, err => {
+});
+
+const port = process.env.port || 9000;
+
+server.listen(port, err => {
   if (err) console.log(err);
   console.log("Server started at port " + port);
 });
