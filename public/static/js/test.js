@@ -1,2 +1,6 @@
 let socket = io("http://localhost:9000/");
-console.log(socket);
+socket.emit('test');
+
+socket.on('test', ()=> {
+  console.log('test');
+}); 

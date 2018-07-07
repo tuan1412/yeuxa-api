@@ -12,6 +12,11 @@ const imageRouter = require("./modules/api/images/router");
 const userRouter = require("./modules/api/users/router");
 const authRouter = require("./modules/api/auth/router");
 
+mongoose.connect(config.mongoPath, err => {
+  if (err) console.error(err);
+  else console.log("Database connect successful");
+});
+
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "ALLOWALL");
   res.setHeader(
@@ -44,6 +49,23 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
+io.use(function(socket, next) {
+  sessionMiddleware(socket.request, socket.request.res, next);
+}); 
+
+io.on('connection', (socket) => {
+  console.log(socket.id + ' connected');
+  console.log(socket.request.session.userInfo);
+  socket.on('test', () => {
+    console.log('test');
+  })
+});
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ extended: false }));
 
@@ -53,23 +75,9 @@ app.use("/api/users", userRouter);
 
 app.use(express.static('./public'));
 
-io.use(function(socket, next) {
-  sessionMiddleware(socket.request, socket.request.res, next);
-}); 
-
 app.get('/', (req,res) => {
+  req.io.sockets.emit('test');
   res.sendFile('./public/index.html');
-});
-
-mongoose.connect(config.mongoPath, err => {
-  if (err) console.error(err);
-  else console.log("Database connect successful");
-});
-
-io.on('connection', (socket) => {
-  console.log(socket.id + ' connected');
-  console.log(socket.request.session.userInfo);
-
 });
 
 const port = process.env.PORT || 9000;

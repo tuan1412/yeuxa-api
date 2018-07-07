@@ -1,14 +1,14 @@
 const userModel = require("./model");
 const fs = require("fs");
 
-const createUser = ({ username, email, password, imageFile }) =>
+const createUser = ({ username, fullname, password, imageFile }) =>
   new Promise((resolve, reject) => {
     userModel
       .create({
         avatar: fs.readFileSync(imageFile.path),
         contentType: imageFile.mimetype,
         username,
-        email,
+        fullname,
         password
       })
       .then(user => resolve(user._id))
@@ -24,7 +24,7 @@ const getAllUsers = page =>
       .sort({ createdAt: -1 })
       .skip((page - 1) * 20)
       .limit(20)
-      .select("_id username email")
+      .select("_id username fullname")
       .exec()
       .then(data =>
         resolve(
@@ -45,7 +45,7 @@ const getOneUser = id =>
         active: true,
         _id: id
       })
-      .select("_id username email password")
+      .select("_id username fullname password")
       .exec()
       .then(data =>
         resolve(
@@ -84,7 +84,7 @@ const updateUsername = (id, username) =>
       .catch(err => reject(err));
   });
 
-const updateEmail = (id, email) =>
+const updateFullname = (id, fullname) =>
   new Promise((resolve, reject) => {
     userModel
       .update(
@@ -92,7 +92,7 @@ const updateEmail = (id, email) =>
           _id: id
         },
         {
-          email
+          fullname
         }
       )
       .exec()
@@ -152,7 +152,7 @@ module.exports = {
   getAllUsers,
   getOneUser,
   updateUsername,
-  updateEmail,
+  updateFullname,
   updatePassword,
   updateAvatar,
   deleteUser,

@@ -65,9 +65,9 @@ router.put("/:id/password", (req, res) => {
     });
 });
 
-router.put("/:id/email", (req, res) => {
+router.put("/:id/fullname", (req, res) => {
   userController
-    .updateUsername(req.params.id, req.body.email)
+    .updateUsername(req.params.id, req.body.fullname)
     .then(id => res.send(id))
     .catch(err => {
       console.error(err);

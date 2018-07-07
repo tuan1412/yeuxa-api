@@ -6,18 +6,7 @@ const userModel = new Schema(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      validate: {
-        validator: function(value) {
-          const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return regex.test(value);
-        },
-        message: "{VALUE} is not a valid email address!"
-      }
-    },
+    fullname: {type: String, required: true},
     avatar: { type: Buffer, required: true },
     contentType: { type: String },
     friend: {type: String, default: null},

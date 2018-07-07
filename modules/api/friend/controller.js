@@ -1,9 +1,9 @@
 const {friendModel, requestStatus} = require("./model");
 const fs = require("fs");
 
-const createImage = ({ title, description, userId, imageFile }) =>
+const createInvitation = ({ username }) =>
   new Promise((resolve, reject) => {
-    imageModel
+    friendModel
       .create({
         image: fs.readFileSync(imageFile.path),
         contentType: imageFile.mimetype,
