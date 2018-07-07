@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
 
 });
 
-const port = process.env.port || 9000;
+const port = process.env.PORT || 9000;
 
 server.listen(port, err => {
   if (err) console.log(err);

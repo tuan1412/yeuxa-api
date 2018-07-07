@@ -20,6 +20,7 @@ const userModel = new Schema(
     },
     avatar: { type: Buffer, required: true },
     contentType: { type: String },
+    friend: {type: String, default: null},
     active: { type: Boolean, default: true }
   },
   { timestamps: { createdAt: "createdAt" } }
