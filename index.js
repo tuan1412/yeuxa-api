@@ -11,6 +11,7 @@ const io = require('socket.io')(server);
 const imageRouter = require("./modules/api/images/router");
 const userRouter = require("./modules/api/users/router");
 const authRouter = require("./modules/api/auth/router");
+const friendRouter = require("./modules/api/friend/router");
 
 mongoose.connect(config.mongoPath, err => {
   if (err) console.error(err);
@@ -53,17 +54,7 @@ io.use(function(socket, next) {
   sessionMiddleware(socket.request, socket.request.res, next);
 }); 
 
-io.on('connection', (socket) => {
-  console.log(socket.id + ' connected');
-  console.log(socket.request.session.userInfo);
-  socket.on('test', () => {
-    console.log('test');
-  })
-});
-
-app.use((req, res, next) => {
-  req.io = io;
-  next();
+io.on('connection', (socket) => { 
 });
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -72,11 +63,11 @@ app.use(bodyParser.json({ extended: false }));
 app.use("/api/auth", authRouter);
 app.use("/api/images", imageRouter);
 app.use("/api/users", userRouter);
+app.use("/api/friend", friendRouter);
 
 app.use(express.static('./public'));
 
-app.get('/', (req,res) => {
-  req.io.sockets.emit('test');
+app.get('/', (req,res) => {  
   res.sendFile('./public/index.html');
 });
 

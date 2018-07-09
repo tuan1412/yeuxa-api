@@ -1,6 +1,12 @@
+const ErrorHandler = require("../error/ErrorHandler");
+const {AuthError, RequestError} = require("../error/auth");
 const authorize = (req, res, next) => {
   if (!req.session || !req.session.userInfo) {
-    res.status(401).send("Unauthorized!");
+    try {
+      throw new AuthError();
+    } catch (error) {
+      ErrorHandler.handle(res, error);
+    }
   } else next();
 };
 

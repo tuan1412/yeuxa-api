@@ -9,9 +9,10 @@ let requestStatus = {PENDING, ACCEPTED, REJECTED};
 
 const friendModel = new Schema(
   {
-    sender: String,
-    receiver: String,
-    status: Number,
+    sender: { type: String },
+    receiver: { type: String },
+    status: { type: Number, default: PENDING },
+    active: { type: Boolean, default: true }
   },
   { timestamps: { createdAt: "createdAt" } }
 );

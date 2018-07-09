@@ -1,5 +1,5 @@
 {
-  "mongoPath": "mongodb://admin:admin123456@ds227171.mlab.com:27171/yeuxa-api",
+  "mongoPath": "mongodb://localhost/yeuxa-api",
   "sessionSecret": "himitsu",
   "secureCookie": false
 }

@@ -1,29 +1,111 @@
-const {friendModel, requestStatus} = require("./model");
+const { friendModel, requestStatus } = require("./model");
 const fs = require("fs");
 
-const createInvitation = ({ username }) =>
+const createInvitation = (username, friendname) =>
   new Promise((resolve, reject) => {
     friendModel
       .create({
-        image: fs.readFileSync(imageFile.path),
-        contentType: imageFile.mimetype,
-        title,
-        description,
-        createdBy: userId
+        sender: username,
+        receiver: friendname
       })
-      .then(data => resolve({ id: data._id }))
+      .then(data => resolve(data))
       .catch(err => reject(err));
   });
 
+const checkIsFriend = (username, friendname) =>
+  new Promise((resolve, reject) => {
+    let query = {
+      $or: [
+        { $and: [{ sender: username }, { receiver: friendname }] },
+        { $and: [{ sender: friendname }, { receiver: username }] }
+      ],
+      $and: [
+        { active: true }
+      ]
+    };
+
+    friendModel
+      .findOne(
+        {},
+        query
+      )
+      .select("_id status")
+      .exec()
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
+
+const getInvitationList = (username) =>
+  new Promise((resolve, reject) => {
+    let query = {
+      $and: [
+        { $or: [{ sender: username }, { receiver: username }] },
+        { status: requestStatus.PENDING, active: true }
+      ]
+    };
+
+    friendModel
+      .find(query)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
+
+const acceptInvitation = id =>
+  new Promise((resolve, reject) => {
+    console.log(id);
+    friendModel
+      .update(
+        {
+          _id: id,
+          active: true
+        },
+        {
+          status: requestStatus.ACCEPTED
+        }
+      )
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
+
+const rejectInvitation = id =>
+  new Promise((resolve, reject) => {
+    console.log(id);
+    friendModel
+      .update(
+        {
+          _id: id,
+          active: true
+        },
+        {
+          status: requestStatus.REJECTED
+        }
+      )
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
+
+const deleteInvitation = id =>
+  new Promise((resolve, reject) => {
+    console.log(id);
+    friendModel
+      .update(
+        {
+          _id: id,
+          active: true
+        },
+        {
+          active: false
+        }
+      )
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
+
 module.exports = {
-  createImage,
-  getAllImages,
-  getImage,
-  updateImage,
-  deleteImage,
-  addComment,
-  deleteComment,
-  likeImage,
-  unlikeImage,
-  getImageData
+  createInvitation,
+  checkIsFriend,
+  getInvitationList,
+  acceptInvitation,
+  rejectInvitation,
+  deleteInvitation
 };
