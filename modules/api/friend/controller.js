@@ -1,5 +1,4 @@
 const { friendModel, requestStatus } = require("./model");
-const fs = require("fs");
 
 const createInvitation = (username, friendname) =>
   new Promise((resolve, reject) => {
@@ -14,30 +13,25 @@ const createInvitation = (username, friendname) =>
 
 const checkIsFriend = (username, friendname) =>
   new Promise((resolve, reject) => {
-    let query = {
+    const query = {
       $or: [
         { $and: [{ sender: username }, { receiver: friendname }] },
         { $and: [{ sender: friendname }, { receiver: username }] }
       ],
-      $and: [
-        { active: true }
-      ]
+      $and: [{ active: true }]
     };
 
     friendModel
-      .findOne(
-        {},
-        query
-      )
+      .findOne({}, query)
       .select("_id status")
       .exec()
       .then(res => resolve(res))
-      .catch(err => reject(err))
+      .catch(err => reject(err));
   });
 
-const getInvitationList = (username) =>
+const getInvitationList = username =>
   new Promise((resolve, reject) => {
-    let query = {
+    const query = {
       $and: [
         { $or: [{ sender: username }, { receiver: username }] },
         { status: requestStatus.PENDING, active: true }
@@ -47,7 +41,7 @@ const getInvitationList = (username) =>
     friendModel
       .find(query)
       .then(res => resolve(res))
-      .catch(err => reject(err))
+      .catch(err => reject(err));
   });
 
 const acceptInvitation = id =>
@@ -64,7 +58,7 @@ const acceptInvitation = id =>
         }
       )
       .then(res => resolve(res))
-      .catch(err => reject(err))
+      .catch(err => reject(err));
   });
 
 const rejectInvitation = id =>
@@ -81,7 +75,7 @@ const rejectInvitation = id =>
         }
       )
       .then(res => resolve(res))
-      .catch(err => reject(err))
+      .catch(err => reject(err));
   });
 
 const deleteInvitation = id =>
@@ -98,7 +92,7 @@ const deleteInvitation = id =>
         }
       )
       .then(res => resolve(res))
-      .catch(err => reject(err))
+      .catch(err => reject(err));
   });
 
 module.exports = {

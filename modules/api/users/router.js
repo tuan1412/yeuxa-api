@@ -1,6 +1,8 @@
 const express = require("express");
+
 const router = express.Router();
 const multer = require("multer");
+
 const upload = multer({ dest: "uploads/" });
 
 const userController = require("./controller");
@@ -16,18 +18,16 @@ router.get("/", (req, res) => {
     });
 });
 
-router.post("/",
-  upload.single("avatar"),
-  (req, res) => {    
-    req.body.imageFile = req.file;
-    userController
-      .createUser(req.body)
-      .then(id => res.send(id))
-      .catch(err => {
-        console.error(err);
-        res.status(500).send(err);
-      });
-  });
+router.post("/", upload.single("avatar"), (req, res) => {
+  req.body.imageFile = req.file;
+  userController
+    .createUser(req.body)
+    .then(id => res.send(id))
+    .catch(err => {
+      console.error(err);
+      res.status(500).send(err);
+    });
+});
 
 router.get("/:id", (req, res) => {
   userController
@@ -40,7 +40,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.use("/:id/*", authMiddleware.authorize, (req, res, next) => {
-  if (req.session.userInfo.id != req.params.id) {
+  if (req.session.userInfo.id !== req.params.id) {
     res.status(401).send("Unauthorized!");
   } else next();
 });

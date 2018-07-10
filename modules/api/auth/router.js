@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const authController = require("./controller");
@@ -22,7 +23,5 @@ router.delete("/", (req, res) => {
   req.session.destroy();
   res.send("Logged out");
 });
-
-
 
 module.exports = router;

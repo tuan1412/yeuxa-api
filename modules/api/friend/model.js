@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const PENDING = 0;
 const ACCEPTED = 1;
 const REJECTED = 2;
 
-let requestStatus = {PENDING, ACCEPTED, REJECTED};
+const requestStatus = { PENDING, ACCEPTED, REJECTED };
 
 const friendModel = new Schema(
   {

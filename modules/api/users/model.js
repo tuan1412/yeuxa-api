@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 const bcrypt = require("bcryptjs");
 
 const userModel = new Schema(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    fullname: {type: String, required: true},
+    fullname: { type: String, required: true },
     avatar: { type: Buffer, required: true },
     contentType: { type: String },
-    friend: {type: String, default: null},
+    friend: { type: String, default: null },
     active: { type: Boolean, default: true }
   },
   { timestamps: { createdAt: "createdAt" } }
