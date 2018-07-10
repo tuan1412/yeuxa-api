@@ -2,3 +2,4 @@ uploads/
 node_modules/
 .eslintrc.json
 .vscode/
+package-lock.json

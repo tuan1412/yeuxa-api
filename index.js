@@ -50,15 +50,21 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-io.use(function(socket, next) {
+io.use(function (socket, next) {
   sessionMiddleware(socket.request, socket.request.res, next);
-}); 
+});
 
-let users = {};
+let usersOnline = [];
 
-io.on('connection', (socket) => { 
-  if (socket.request.session.userInfo) socket.currentuser = socket.request.session.userInfo;
+io.on('connection', (socket) => {  
+  if (socket.request.session.userInfo && users.indexOf(socket.request.session.userInfo.username) < 0) {
+    usersOnline.push(socket.request.session.userInfo.username);
+  }
   
+
+  socket.on('disconnect', () => {
+    usersOnline = users.filter(user => user !== socket.request.session.userInfo.username);    
+  });
 });
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -70,7 +76,7 @@ app.use("/api/friend", friendRouter);
 
 app.use(express.static('./public'));
 
-app.get('/', (req,res) => {  
+app.get('/', (req, res) => {
   res.sendFile('./public/index.html');
 });
 

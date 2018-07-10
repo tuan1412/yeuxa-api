@@ -142,7 +142,7 @@ const getUserForAuth = username =>
   new Promise((resolve, reject) => {
     userModel
       .findOne({ username })
-      .select("username password _id")
+      .select("username password _id friend")
       .then(user => resolve(user))
       .catch(err => reject(err));
   });

@@ -16,7 +16,7 @@ const login = ({ username, password }) =>
             .compare(password, user.password)
             .then(result => {
               if (result) {
-                resolve({ username: user.username, id: user._id });
+                resolve({ username: user.username, id: user._id, friend: user.friend });
               } else {
                 reject({
                   status: 400,
