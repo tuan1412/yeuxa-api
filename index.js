@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const config = require("./config-local.json");
+const _ = require("lodash");
 
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-const imageRouter = require("./modules/api/images/router");
 const userRouter = require("./modules/api/users/router");
 const authRouter = require("./modules/api/auth/router");
 const friendRouter = require("./modules/api/friend/router");
@@ -54,14 +54,17 @@ io.use(function(socket, next) {
   sessionMiddleware(socket.request, socket.request.res, next);
 }); 
 
+let users = {};
+
 io.on('connection', (socket) => { 
+  if (socket.request.session.userInfo) socket.currentuser = socket.request.session.userInfo;
+  
 });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ extended: false }));
 
 app.use("/api/auth", authRouter);
-app.use("/api/images", imageRouter);
 app.use("/api/users", userRouter);
 app.use("/api/friend", friendRouter);
 
