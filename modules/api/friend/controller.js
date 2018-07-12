@@ -1,4 +1,5 @@
 const { friendModel, requestStatus } = require("./model");
+const UserModel = require("../users/model");
 
 const createInvitation = (username, friendname) =>
   new Promise((resolve, reject) => {
@@ -48,18 +49,31 @@ const acceptInvitation = id =>
   new Promise((resolve, reject) => {
     console.log(id);
     friendModel
-      .update(
-        {
-          _id: id,
-          active: true
-        },
-        {
-          status: requestStatus.ACCEPTED
-        }
+      .findByIdAndUpdate(
+        id,        
+        { status: requestStatus.ACCEPTED },
+        { new: true }
       )
-      .then(res => resolve(res))
-      .catch(err => reject(err));
+      .then(response => {
+        let updateFriend = async res => {
+          try {
+            let sender = await UserModel.update({username: res.sender}, {friend: res.receiver}).exec();
+            let receiver = await UserModel.update({username: res.receiver}, {friend: res.sender}).exec();
+
+            if (sender && receiver) return {sender, receiver};
+            else return "that bai";
+          } catch (error) {
+            return error;
+          }        
+        }
+        
+        return updateFriend(response);
+      })
+      .then(data => resolve(data))
+      .catch(err => reject(err))
   });
+
+  
 
 const rejectInvitation = id =>
   new Promise((resolve, reject) => {
