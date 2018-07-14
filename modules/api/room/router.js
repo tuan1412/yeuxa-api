@@ -10,6 +10,13 @@ router.get('/', (req,res) => {
         .catch(err => res.send(err));
 })
 
+router.get('/info/:id', (req,res) => {
+    roomController
+        .getRoomInfo(req.params.id)
+        .then(members => res.send({members: members}))
+        .catch(err => res.status(500).send(err));
+})
+
 router.post('/:id', (req,res) => {
     roomController
         .postRoomMessage(req.params.id)
