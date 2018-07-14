@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const config = require("./config-local.json");
 const _ = require("lodash");
-
+const background = require('./background');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
@@ -51,20 +51,40 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-io.use(function (socket, next) {
-  sessionMiddleware(socket.request, socket.request.res, next);
-});
+let roomsOnline = {};
 
-let usersOnline = [];
+io.on('connection', (socket) => {
+  socket.on('online', data => {
+    socket.username = data.username;
+    socket.room = data.room;
+    socket.join(data.room);
+    const room = data.room;
+    background(data.place.city).then(res => {
+      if (roomsOnline[room] === undefined) {
+        roomsOnline[room] = [{username: data.username, place: background}]
+      } else {
+        roomsOnline[room].push({username: data.username, place: background});
+      }
+      io.in(room).emit('loveOnline', roomsOnline[room]);
+    })
+    .catch(e => {
+      if (roomsOnline[room] === undefined) {
+        roomsOnline[room] = [{username: data.username, place: {}}]
+      } else {
+        roomsOnline[room].push({username: data.username, place: {}});
+      }
+      io.in(room).emit('loveOnline', roomsOnline[room]);
+    })
+  })
 
-io.on('connection', (socket) => {  
-  if (socket.request.session.userInfo && users.indexOf(socket.request.session.userInfo.username) < 0) {
-    usersOnline.push(socket.request.session.userInfo.username);
-  }
-  
+  socket.on('message', message => {
+    io.in(socket.room).emit('loveMessage', message);
+  });
 
   socket.on('disconnect', () => {
-    usersOnline = users.filter(user => user !== socket.request.session.userInfo.username);    
+    if (!roomsOnline[socket.room]) return;
+    roomsOnline[socket.room].splice(roomsOnline[socket.room].findIndex(user => user.username === socket.username), 1);
+    io.in(socket.room).emit('loveOffline');
   });
 });
 
@@ -74,7 +94,7 @@ app.use(bodyParser.json({ extended: false }));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/friend", friendRouter);
-app.use("api/room", roomRouter);
+app.use("/api/room", roomRouter);
 
 app.use(express.static('./public'));
 
