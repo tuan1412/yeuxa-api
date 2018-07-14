@@ -1,6 +1,14 @@
 const userModel = require("./model");
 const fs = require("fs");
 
+const checkNotHasFriend = (req, res, next) => {
+  if(req.session.userInfo.room) {
+    res.send('da co ban roi')
+  } else {
+    next()
+  }  
+};
+
 const createUser = ({ username, fullname, password, imageFile }) =>
   new Promise((resolve, reject) => {
     userModel
@@ -157,5 +165,6 @@ module.exports = {
   updateAvatar,
   deleteUser,
   getUserForAuth,
-  getAvatarData
+  getAvatarData,
+  checkNotHasFriend
 };

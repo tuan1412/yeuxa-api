@@ -3,9 +3,10 @@ const express = require("express");
 const router = express.Router();
 
 const friendController = require("./controller");
+const userController = require("../users/controller");
 const authMiddleware = require("../auth/auth");
 
-router.post("/add-friend", authMiddleware.authorize, (req, res) => {
+router.post("/add-friend", authMiddleware.authorize, userController.checkNotHasFriend, (req, res) => {
   const { username } = req.session.userInfo;
   const friendname = req.body.username;
   friendController
@@ -45,7 +46,7 @@ router.get("/list-invitation", authMiddleware.authorize, (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-router.put("/accept-invitation", authMiddleware.authorize, (req, res) => {
+router.put("/accept-invitation", authMiddleware.authorize, userController.checkNotHasFriend, (req, res) => {
   friendController
     .acceptInvitation(req.body.id)
     .then(response => res.send(response))
