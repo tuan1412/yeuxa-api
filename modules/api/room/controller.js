@@ -11,6 +11,16 @@ const createRoom = ({ username1, username2 }) => {
       .catch(err => reject(err));
   })
 }
+
+const getRoomInfo = id => new Promise((resolve, reject) => {
+    roomModel
+        .findById({
+            _id: id
+        })
+        .exec()
+        .then(data => resolve(data.members))
+        .catch(err => reject(err))
+})
   
 
 const getRoomMessage = (id) => new Promise((resolve, reject) => {
@@ -84,5 +94,6 @@ module.exports = {
     createRoom,
     getRoomMessage,
     postRoomMessage,
-    getRoomMessageByPage
+    getRoomMessageByPage,
+    getRoomInfo
 };
