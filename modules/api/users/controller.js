@@ -49,7 +49,7 @@ const getOneUser = username =>
       .exec()
       .then(data =>
         resolve(
-          Object.assign({}, data._doc, { avatarUrl: `/api/users/${data._id}/avatar` })
+          Object.assign({}, data._doc, { avatarUrl: `/api/users/avatar/${data._id}` })
         )
       )
       .catch(err => reject(err));

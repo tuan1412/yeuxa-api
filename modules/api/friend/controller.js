@@ -27,7 +27,7 @@ const checkIsFriend = (username, friendname) =>
     };
 
     friendModel
-      .findOne({}, query)
+      .findOne(query)
       .select("_id status")
       .exec()
       .then(res => resolve(res))
@@ -65,6 +65,7 @@ const acceptInvitation = id =>
             let room = await RoomController.createRoom({ username1: res.sender, username2: res.receiver });
             let sender = await UserModel.update({ username: res.sender }, { room: _.toString(room._id) }).exec();
             let receiver = await UserModel.update({ username: res.receiver }, { room: _.toString(room._id) }).exec();
+            
            
             if (sender && receiver && room) return room;
             else throw new Error("that bai");
