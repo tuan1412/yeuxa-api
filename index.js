@@ -74,7 +74,7 @@ app.use(bodyParser.json({ extended: false }));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/friend", friendRouter);
-app.use("api/room", roomRouter);
+app.use("/api/room", roomRouter);
 
 app.use(express.static('./public'));
 
