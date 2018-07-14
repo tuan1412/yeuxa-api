@@ -16,6 +16,8 @@ const createInvitation = (username, friendname) =>
 
 const checkIsFriend = (username, friendname) =>
   new Promise((resolve, reject) => {
+    console.log(username);
+    console.log(friendname);
     const query = {
       $or: [
         { $and: [{ sender: username }, { receiver: friendname }] },
