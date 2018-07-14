@@ -1,6 +1,7 @@
 const { friendModel, requestStatus } = require("./model");
 const UserModel = require("../users/model");
 const RoomController = require("../room/controller");
+const _ = require("lodash");
 
 const createInvitation = (username, friendname) =>
   new Promise((resolve, reject) => {
@@ -59,11 +60,10 @@ const acceptInvitation = id =>
        
         let updateFriend = async res => {
           try {
-            let sender = await UserModel.update({ username: res.sender }, { friend: res.receiver }).exec();
-            let receiver = await UserModel.update({ username: res.receiver }, { friend: res.sender }).exec();
-            console.log(res.sender);
             let room = await RoomController.createRoom({ username1: res.sender, username2: res.receiver });
-            console.log(room);
+            let sender = await UserModel.update({ username: res.sender }, { room: _.toString(room._id) }).exec();
+            let receiver = await UserModel.update({ username: res.receiver }, { room: _.toString(room._id) }).exec();
+           
             if (sender && receiver && room) return room;
             else throw new Error("that bai");
           } catch (error) {

@@ -10,7 +10,7 @@ const userModel = new Schema(
     fullname: { type: String, required: true },
     avatar: { type: Buffer },
     contentType: { type: String },
-    friend: { type: String, default: null },
+    room: { type: String, default: null },
     active: { type: Boolean, default: true }
   },
   { timestamps: { createdAt: "createdAt" } }
