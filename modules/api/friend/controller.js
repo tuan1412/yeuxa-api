@@ -51,7 +51,9 @@ const acceptInvitation = id =>
     friendModel
       .findByIdAndUpdate(
         id,        
-        { status: requestStatus.ACCEPTED },
+        { status: requestStatus.ACCEPTED,
+          time: 1
+        },
         { new: true }
       )
       .then(response => {

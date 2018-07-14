@@ -13,7 +13,8 @@ const friendModel = new Schema(
     sender: { type: String },
     receiver: { type: String },
     status: { type: Number, default: PENDING },
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true },
+    time: { type: Number, default: null}
   },
   { timestamps: { createdAt: "createdAt" } }
 );

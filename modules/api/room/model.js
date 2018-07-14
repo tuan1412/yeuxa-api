@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const MessageSchema = new mongoose.Schema({
   userName: { type: String, ref: 'User' },
-  body: { type: String, default: '' }
+  body: { type: String, default: '' },
+  seen: { type: Boolean}
 }, { timestamps: { createdAt: 'created_at' } });
 
 const RoomSchema = new mongoose.Schema({
