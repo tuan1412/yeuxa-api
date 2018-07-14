@@ -39,6 +39,19 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.get("/avatar/:id", (req, res) => {
+  userController
+    .getAvatarData(req.params.id)
+    .then(data => {
+      res.contentType(data.contentType);
+      res.send(data.avatar);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send(err);
+    });
+});
+
 router.use("/:id/*", authMiddleware.authorize, (req, res, next) => {
   if (req.session.userInfo.id !== req.params.id) {
     res.status(401).send("Unauthorized!");
@@ -69,19 +82,6 @@ router.put("/:id/fullname", (req, res) => {
   userController
     .updateUsername(req.params.id, req.body.fullname)
     .then(id => res.send(id))
-    .catch(err => {
-      console.error(err);
-      res.status(500).send(err);
-    });
-});
-
-router.get("/:id/avatar", (req, res) => {
-  userController
-    .getAvatarData(req.params.id)
-    .then(data => {
-      res.contentType(data.contentType);
-      res.send(data.avatar);
-    })
     .catch(err => {
       console.error(err);
       res.status(500).send(err);

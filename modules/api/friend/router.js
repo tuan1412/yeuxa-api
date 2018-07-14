@@ -10,24 +10,25 @@ router.post("/add-friend", authMiddleware.authorize, (req, res) => {
   const friendname = req.body.username;
   friendController
     .checkIsFriend(username, friendname)
-    .then(response => {
-      console.log(response);
-      if (response) {
-        switch (response.status) {
-          case 0:
-            res.send("da gui loi moi");
-            break;
-          case 1:
-            res.send("2 nguoi da la ban");
-            break;
-          case 2:
-            res.send("nick da block");
-            break;
-          default:
-            break;
-        }
+    .then(response => {      
+      if (!response) {
+        return friendController.createInvitation(username, friendname);        
       }
-      return friendController.createInvitation(username, friendname);
+      
+      switch (response.status) {
+        case 0:
+          res.send("da gui loi moi");
+          break;
+        case 1:
+          res.send("2 nguoi da la ban");
+          break;
+        case 2:
+          res.send("nick da block");
+          break;
+        default:
+          res.send("default");
+          break;
+      }      
     })
     .then(data => res.send(data))
     .catch(err => {
