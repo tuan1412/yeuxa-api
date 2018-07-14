@@ -49,18 +49,18 @@ const getOneUser = username =>
       .exec()
       .then(data =>
         resolve(
-          Object.assign({}, data._doc, { avatarUrl: `/api/users/${id}/avatar` })
+          Object.assign({}, data._doc, { avatarUrl: `/api/users/${data._id}/avatar` })
         )
       )
       .catch(err => reject(err));
   });
 
-const getAvatarData = username =>
+const getAvatarData = id =>
   new Promise((resolve, reject) => {
     userModel
       .findOne({
         active: true,
-        username: username
+        _id: id
       })
       .select("avatar contentType")
       .exec()
@@ -142,7 +142,7 @@ const getUserForAuth = username =>
   new Promise((resolve, reject) => {
     userModel
       .findOne({ username })
-      .select("username password _id friend")
+      .select("username password _id room")
       .then(user => resolve(user))
       .catch(err => reject(err));
   });

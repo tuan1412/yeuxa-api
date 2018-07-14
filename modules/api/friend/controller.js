@@ -1,5 +1,7 @@
 const { friendModel, requestStatus } = require("./model");
 const UserModel = require("../users/model");
+const RoomController = require("../room/controller");
+const _ = require("lodash");
 
 const createInvitation = (username, friendname) =>
   new Promise((resolve, reject) => {
@@ -14,6 +16,8 @@ const createInvitation = (username, friendname) =>
 
 const checkIsFriend = (username, friendname) =>
   new Promise((resolve, reject) => {
+    console.log(username);
+    console.log(friendname);
     const query = {
       $or: [
         { $and: [{ sender: username }, { receiver: friendname }] },
@@ -50,32 +54,32 @@ const acceptInvitation = id =>
     console.log(id);
     friendModel
       .findByIdAndUpdate(
-        id,        
-        { status: requestStatus.ACCEPTED,
-          time: 1
-        },
+        id,
+        { status: requestStatus.ACCEPTED },
         { new: true }
-      )
+      )      
       .then(response => {
+       
         let updateFriend = async res => {
           try {
-            let sender = await UserModel.update({username: res.sender}, {friend: res.receiver}).exec();
-            let receiver = await UserModel.update({username: res.receiver}, {friend: res.sender}).exec();
-
-            if (sender && receiver) return {sender, receiver};
-            else return "that bai";
+            let room = await RoomController.createRoom({ username1: res.sender, username2: res.receiver });
+            let sender = await UserModel.update({ username: res.sender }, { room: _.toString(room._id) }).exec();
+            let receiver = await UserModel.update({ username: res.receiver }, { room: _.toString(room._id) }).exec();
+           
+            if (sender && receiver && room) return room;
+            else throw new Error("that bai");
           } catch (error) {
             return error;
-          }        
+          }
         }
-        
+
         return updateFriend(response);
       })
       .then(data => resolve(data))
-      .catch(err => reject(err))
+      .catch(err => {console.log('sadasdasdasdas');reject(err)})
   });
 
-  
+
 
 const rejectInvitation = id =>
   new Promise((resolve, reject) => {

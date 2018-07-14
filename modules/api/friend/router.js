@@ -11,6 +11,7 @@ router.post("/add-friend", authMiddleware.authorize, (req, res) => {
   friendController
     .checkIsFriend(username, friendname)
     .then(response => {
+      console.log(response);
       if (response) {
         switch (response.status) {
           case 0:
