@@ -23,30 +23,29 @@ const getRoomInfo = id => new Promise((resolve, reject) => {
 })
   
 
-const getRoomMessage = id => new Promise((resolve, reject) => {
-    roomModel
-        .findByIdAndUpdate(
-            {
-                _id: id
-            },
-            {
-                messages: [
-                    {
-                        seen : true
-                    }
-                ]
-            }
-        ) 
-        .sort({ createdAt: 1})
-        .skip((page-1) * 10)
-        .limit(10)
-        .select('members messages')
-        .exec()
-        .then(data => resolve(data))
-        .catch(err => {
-            reject(err);
-        });
-});
+// const getRoomMessage = id => new Promise((resolve, reject) => {
+//     roomModel
+//         .findByIdAndUpdate(
+//             {
+//                 _id: id
+//             },
+//             {
+//                 messages: 
+//                     {
+//                         seen : true
+//                     }
+                
+//             }
+//         ) 
+//         .sort({ createdAt: 1})
+//         .limit(10)
+//         .select('members messages')
+//         .exec()
+//         .then(data => resolve(data))
+//         .catch(err => {
+//             reject(err);
+//         });
+// });
 
 const postRoomMessage = (id, {username, contents}) => new Promise((resolve, reject) => {
     roomModel
@@ -64,16 +63,16 @@ const postRoomMessage = (id, {username, contents}) => new Promise((resolve, reje
        .catch(err => reject(err));
 });
 
-const getRoomMessageByPage = page => new Promise((resolve, reject) => {
+const getRoomMessageByPage = page => 
+    new Promise((resolve, reject) => {
     roomModel
         .find(
             { 
-                messages: [
+                messages: 
                     {
-                        seen: true
+                        seen: false
                     }
-                ]
-            }
+            })
         .sort({ createdAt: -1})
         .skip((page-1) * 20)
         .limit(20)
@@ -83,12 +82,11 @@ const getRoomMessageByPage = page => new Promise((resolve, reject) => {
         .catch(err => {
             reject(err);
         })
-        )
 })
 
 module.exports = {
     createRoom,
-    getRoomMessage,
+    // getRoomMessage,
     postRoomMessage,
     getRoomMessageByPage,
     getRoomInfo

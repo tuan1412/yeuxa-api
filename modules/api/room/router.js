@@ -24,13 +24,13 @@ router.put('/:id', (req,res) => {
         .catch(err => res.status(500).send(err))
 })
 
-router.get('/:id', (req,res) => {
-    roomController
-        .getRoomMessage(req.params.id)
-        .then(data => res.send(data)
-        .catch(err => res.send(err))
-        )
-})
+// router.get('/:id', (req,res) => {
+//     roomController
+//         .getRoomMessage(req.params.id)
+//         .then(data => res.send(data)
+//         .catch(err => res.send(err))
+//         )
+// })
 
 router.get('/:id', (req,res) => {
     roomController
