@@ -12,6 +12,7 @@ const io = require('socket.io')(server);
 const userRouter = require("./modules/api/users/router");
 const authRouter = require("./modules/api/auth/router");
 const friendRouter = require("./modules/api/friend/router");
+const roomRouter = require("./modules/api/room/router");
 
 mongoose.connect(config.mongoPath, err => {
   if (err) console.error(err);
@@ -73,6 +74,7 @@ app.use(bodyParser.json({ extended: false }));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/friend", friendRouter);
+app.use("api/room", roomRouter);
 
 app.use(express.static('./public'));
 
