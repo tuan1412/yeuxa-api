@@ -7,7 +7,32 @@ router.get('/', (req,res) => {
     roomController
         .createRoomInfo(req.body)
         .then(data => res.send({id: data._id, username1: data.username1, username2:data.username2}))
-        .catch(err => ress.send(err));
+        .catch(err => res.send(err));
 })
+
+router.post('/:id', (req,res) => {
+    roomController
+        .postRoomMessage(req.params.id)
+        .then(data => res.status(200).send('send message success'))
+        .catch(err => res.status(500).send(err))
+})
+
+router.get('/:id', (req,res) => {
+    roomController
+        .getRoomMessage(req.params.id)
+        .then(data => res.send(data)
+        .catch(err => res.send(err))
+        )
+})
+
+router.get('/:id', (req,res) => {
+    roomController
+        .getRoomMessageByPage(req.query.page || 1)
+        .then(data => res.send(data))
+        .catch(err => {
+            console.error(err); 
+            res.status(500).send(err);
+        })
+}) 
 
 module.exports = router;
