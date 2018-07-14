@@ -8,7 +8,7 @@ const userModel = new Schema(
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     fullname: { type: String, required: true },
-    avatar: { type: Buffer, required: true },
+    avatar: { type: Buffer },
     contentType: { type: String },
     friend: { type: String, default: null },
     active: { type: Boolean, default: true }
