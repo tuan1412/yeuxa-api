@@ -63,22 +63,15 @@ const postRoomMessage = (id, {username, contents}) => new Promise((resolve, reje
        .catch(err => reject(err));
 });
 
-const getRoomMessageByPage = page => 
+const getRoomMessageByPage = (id, page) => 
     new Promise((resolve, reject) => {
     roomModel
-        .find(
-            { 
-                messages: 
-                    {
-                        seen: false
-                    }
-            })
+        .findOne({_id: id}) 
         .sort({ createdAt: -1})
         .skip((page-1) * 20)
         .limit(20)
-        .select('members messages')
         .exec()
-        .then(data => resolve(data))
+        .then(data => resolve(data.messages))
         .catch(err => {
             reject(err);
         })

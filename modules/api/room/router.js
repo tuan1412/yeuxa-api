@@ -34,7 +34,7 @@ router.put('/:id', (req,res) => {
 
 router.get('/:id', (req,res) => {
     roomController
-        .getRoomMessageByPage(req.query.page || 1)
+        .getRoomMessageByPage(req.params.id, req.query.page || 1)
         .then(data => res.send(data))
         .catch(err => {
             console.error(err); 
