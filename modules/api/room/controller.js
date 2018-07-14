@@ -23,7 +23,7 @@ const getRoomInfo = id => new Promise((resolve, reject) => {
 })
   
 
-const getRoomMessage = (id) => new Promise((resolve, reject) => {
+const getRoomMessage = id => new Promise((resolve, reject) => {
     roomModel
         .findByIdAndUpdate(
             {
@@ -48,21 +48,17 @@ const getRoomMessage = (id) => new Promise((resolve, reject) => {
         });
 });
 
-const postRoomMessage = ({username, content}) => new Promise((resolve, reject) => {
+const postRoomMessage = (id, {username, contents}) => new Promise((resolve, reject) => {
     roomModel
-        .create({ messages: 
-            [
+        .update(
+            {_id: id},
+            { $push : { messages: 
                 {
-                    username: username
-                },
-                {
-                    body: content
-                },
-                {
+                    userName: username,
+                    body: contents,
                     seen: false
-                }
-            ]
-       })
+                }  
+       }})
        .exec()
        .then(data => resolve(data))
        .catch(err => reject(err));
