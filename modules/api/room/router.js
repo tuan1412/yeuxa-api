@@ -17,10 +17,10 @@ router.get('/info/:id', (req,res) => {
         .catch(err => res.status(500).send(err));
 })
 
-router.post('/:id', (req,res) => {
+router.put('/:id', (req,res) => {
     roomController
-        .postRoomMessage(req.params.id)
-        .then(data => res.status(200).send('send message success'))
+        .postRoomMessage(req.params.id, req.body)
+        .then(data => res.status(200).send(data))
         .catch(err => res.status(500).send(err))
 })
 
