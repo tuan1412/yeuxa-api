@@ -2,11 +2,27 @@ const userModel = require("./model");
 const fs = require("fs");
 
 const checkNotHasFriend = (req, res, next) => {
-  if(req.session.userInfo.room) {
+  if (req.session.userInfo.room) {
     res.send('da co ban roi')
   } else {
     next()
-  }  
+  }
+};
+
+const checkUserExist = (req, res, next) => { 
+  userModel
+    .findOne({
+      active: true,
+      username: req.body.username
+    })    
+    .then(data => {      
+      if (data) {
+        next();
+      } else {
+        res.status(402).send('khong ton tai user nay');
+      }      
+    })
+    .catch(err => res.status(500).send(err));
 };
 
 const createUser = ({ username, fullname, password, imageFile }) =>
@@ -166,5 +182,6 @@ module.exports = {
   deleteUser,
   getUserForAuth,
   getAvatarData,
-  checkNotHasFriend
+  checkNotHasFriend,
+  checkUserExist
 };
