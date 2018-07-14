@@ -38,12 +38,12 @@ const getAllUsers = page =>
       .catch(err => reject(err));
   });
 
-const getOneUser = id =>
+const getOneUser = username =>
   new Promise((resolve, reject) => {
     userModel
       .findOne({
         active: true,
-        _id: id
+        username: username
       })
       .select("_id username fullname password")
       .exec()
@@ -55,12 +55,12 @@ const getOneUser = id =>
       .catch(err => reject(err));
   });
 
-const getAvatarData = id =>
+const getAvatarData = username =>
   new Promise((resolve, reject) => {
     userModel
       .findOne({
         active: true,
-        _id: id
+        username: username
       })
       .select("avatar contentType")
       .exec()
@@ -84,12 +84,12 @@ const updateUsername = (id, username) =>
       .catch(err => reject(err));
   });
 
-const updateFullname = (id, fullname) =>
+const updateFullname = (username, fullname) =>
   new Promise((resolve, reject) => {
     userModel
       .update(
         {
-          _id: id
+          username: username
         },
         {
           fullname
