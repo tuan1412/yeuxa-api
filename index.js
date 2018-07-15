@@ -58,11 +58,13 @@ io.on('connection', (socket) => {
     const room = data.room;
     socket.room = room
     socket.join(room);
+
     background(data.place.city).then(res => {
       if (roomsOnline[room] === undefined) {
-        roomsOnline[room] = [{username: data.username, place: res}]
+        roomsOnline[room] = [{username: data.username, place: res, location: data.place}]
       } else {
-        roomsOnline[room].push({username: data.username, place: res});
+        roomsOnline[room] = roomsOnline[room].filter(user => user.username !== data.username);
+        roomsOnline[room].push({username: data.username, place: res, location: data.place});
       }
       io.in(room).emit('loveOnline', roomsOnline[room]);
     })
@@ -70,6 +72,7 @@ io.on('connection', (socket) => {
       if (roomsOnline[room] === undefined) {
         roomsOnline[room] = [{username: data.username, place: {}}]
       } else {
+        roomsOnline[room] = roomsOnline[room].filter(user => user.username !== data.username);
         roomsOnline[room].push({username: data.username, place: {}});
       }
       io.in(room).emit('loveOnline', roomsOnline[room]);
