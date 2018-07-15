@@ -17,24 +17,24 @@ router.get('/info/:id', (req,res) => {
         .catch(err => res.status(500).send(err));
 })
 
-router.post('/:id', (req,res) => {
+router.put('/:id', (req,res) => {
     roomController
-        .postRoomMessage(req.params.id)
-        .then(data => res.status(200).send('send message success'))
+        .postRoomMessage(req.params.id, req.body)
+        .then(data => res.status(200).send(data))
         .catch(err => res.status(500).send(err))
 })
 
-router.get('/:id', (req,res) => {
-    roomController
-        .getRoomMessage(req.params.id)
-        .then(data => res.send(data)
-        .catch(err => res.send(err))
-        )
-})
+// router.get('/:id', (req,res) => {
+//     roomController
+//         .getRoomMessage(req.params.id)
+//         .then(data => res.send(data)
+//         .catch(err => res.send(err))
+//         )
+// })
 
 router.get('/:id', (req,res) => {
     roomController
-        .getRoomMessageByPage(req.query.page || 1)
+        .getRoomMessageByPage(req.params.id, req.query.page || 1)
         .then(data => res.send(data))
         .catch(err => {
             console.error(err); 
