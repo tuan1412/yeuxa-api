@@ -45,7 +45,6 @@ const sessionMiddleware = session({
   saveUninitialized: false,
   cookie: {
     secure: config.secureCookie,
-    maxAge: 12 * 60 * 60 * 1000
   }
 });
 
@@ -56,14 +55,14 @@ let roomsOnline = {};
 io.on('connection', (socket) => {
   socket.on('online', data => {
     socket.username = data.username;
-    socket.room = data.room;
-    socket.join(data.room);
     const room = data.room;
+    socket.room = room
+    socket.join(room);
     background(data.place.city).then(res => {
       if (roomsOnline[room] === undefined) {
-        roomsOnline[room] = [{username: data.username, place: background}]
+        roomsOnline[room] = [{username: data.username, place: res}]
       } else {
-        roomsOnline[room].push({username: data.username, place: background});
+        roomsOnline[room].push({username: data.username, place: res});
       }
       io.in(room).emit('loveOnline', roomsOnline[room]);
     })
