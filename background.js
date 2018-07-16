@@ -17,6 +17,7 @@ module.exports = async function (place) {
         return {weather, img: imgs[0]};
     }
     catch(e) {
+        console.log(e);
         return {weather, img: ''};
     }
 }

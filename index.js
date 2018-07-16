@@ -96,7 +96,7 @@ io.on("connection", socket => {
   });
 
   socket.on("message", message => {
-    io.in(socket.room).emit("loveMessage", message);
+    socket.to(socket.room).emit("loveMessage", message);
   });
 
   socket.on("disconnect", () => {
