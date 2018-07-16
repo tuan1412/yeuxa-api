@@ -1,7 +1,7 @@
+const _ = require("lodash");
 const { friendModel, requestStatus } = require("./model");
 const UserModel = require("../users/model");
 const RoomController = require("../room/controller");
-const _ = require("lodash");
 
 const createInvitation = (username, friendname) =>
   new Promise((resolve, reject) => {
@@ -53,34 +53,49 @@ const acceptInvitation = id =>
   new Promise((resolve, reject) => {
     console.log(id);
     friendModel
-      .findByIdAndUpdate(
-        id,
-        { status: requestStatus.ACCEPTED },
-        { new: true }
-      )      
+      .findByIdAndUpdate(id, { status: requestStatus.ACCEPTED }, { new: true })
       .then(response => {
-       
-        let updateFriend = async res => {
+        const updateFriend = async res => {
           try {
-            let room = await RoomController.createRoom({ username1: res.sender, username2: res.receiver });
-            let sender = await UserModel.update({ username: res.sender }, { room: _.toString(room._id) }).exec();
-            let receiver = await UserModel.update({ username: res.receiver }, { room: _.toString(room._id) }).exec();
-            
-           
-            if (sender && receiver && room) return room;
-            else throw new Error("that bai");
+            const room = await RoomController.createRoom({
+              username1: res.sender,
+              username2: res.receiver
+            });
+            const sender = await UserModel.update(
+              { username: res.sender },
+              { room: _.toString(room._id) }
+            ).exec();
+            const receiver = await UserModel.update(
+              { username: res.receiver },
+              { room: _.toString(room._id) }
+            ).exec();
+            const disableOtherInvitation = await friendModel
+              .updateMany(
+                {
+                  receiver: res.receiver,
+                  status: requestStatus.PENDING,
+                  active: true
+                },
+                { active: false }
+              )
+              .exec();
+
+            if (sender && receiver && room && disableOtherInvitation)
+              return room;
+            throw new Error("that bai");
           } catch (error) {
             return error;
           }
-        }
+        };
 
         return updateFriend(response);
       })
       .then(data => resolve(data))
-      .catch(err => {console.log('sadasdasdasdas');reject(err)})
+      .catch(err => {
+        console.log("sadasdasdasdas");
+        reject(err);
+      });
   });
-
-
 
 const rejectInvitation = id =>
   new Promise((resolve, reject) => {
