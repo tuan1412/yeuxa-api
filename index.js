@@ -43,33 +43,41 @@ app.use((req, res, next) => {
   next();
 });
 
-const sessionMiddleware = session({
-  secret: config.sessionSecret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: config.secureCookie
-  }
-});
-
-app.use(sessionMiddleware);
+app.use(
+  session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: config.secureCookie,
+      maxAge: 12 * 60 * 60 * 1000
+    }
+  })
+);
 
 const roomsOnline = {};
 
 io.on("connection", socket => {
   socket.on("online", data => {
     socket.username = data.username;
-    socket.room = data.room;
-    socket.join(data.room);
-    const { room } = data;
+    const room = data.room;
+    socket.room = room;
+    socket.join(room);
+
     background(data.place.city)
       .then(res => {
         if (roomsOnline[room] === undefined) {
-          roomsOnline[room] = [{ username: data.username, place: background }];
+          roomsOnline[room] = [
+            { username: data.username, place: res, location: data.place }
+          ];
         } else {
+          roomsOnline[room] = roomsOnline[room].filter(
+            user => user.username !== data.username
+          );
           roomsOnline[room].push({
             username: data.username,
-            place: background
+            place: res,
+            location: data.place
           });
         }
         io.in(room).emit("loveOnline", roomsOnline[room]);
@@ -78,6 +86,9 @@ io.on("connection", socket => {
         if (roomsOnline[room] === undefined) {
           roomsOnline[room] = [{ username: data.username, place: {} }];
         } else {
+          roomsOnline[room] = roomsOnline[room].filter(
+            user => user.username !== data.username
+          );
           roomsOnline[room].push({ username: data.username, place: {} });
         }
         io.in(room).emit("loveOnline", roomsOnline[room]);
