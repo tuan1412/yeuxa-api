@@ -39,6 +39,7 @@ app.use((req, res, next) => {
   next();
 });
 
+
 const sessionMiddleware = session({
   secret: config.sessionSecret,
   resave: false,
