@@ -14,10 +14,6 @@ const authRouter = require("./modules/api/auth/router");
 const friendRouter = require("./modules/api/friend/router");
 const roomRouter = require("./modules/api/room/router");
 
-mongoose.connect(config.mongoPath, err => {
-  if (err) console.error(err);
-  else console.log("Database connect successful");
-});
 
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "ALLOWALL");
@@ -39,18 +35,18 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(
+  session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: config.secureCookie,
+      maxAge: 12 * 60 * 60 * 1000
+    }
+  })
+);
 
-const sessionMiddleware = session({
-  secret: config.sessionSecret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: config.secureCookie,
-    maxAge: 12 * 60 * 60 * 1000
-  }
-});
-
-app.use(sessionMiddleware);
 
 let roomsOnline = {};
 
@@ -105,6 +101,12 @@ app.use(express.static('./public'));
 app.get('/', (req, res) => {
   res.sendFile('./public/index.html');
 });
+
+mongoose.connect(config.mongoPath, err => {
+  if (err) console.error(err);
+  else console.log("Database connect successful");
+});
+
 
 const port = process.env.PORT || 9000;
 
