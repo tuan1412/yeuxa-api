@@ -13,7 +13,7 @@ module.exports = async function (place) {
             icon: res.data.weather[0].icon
         }
         
-        const imgs = await client.search(`${place} ${weather.des}`);
+        const imgs = await client.search(`${place}`);
         return {weather, img: imgs[0]};
     }
     catch(e) {
