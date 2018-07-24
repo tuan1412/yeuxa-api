@@ -99,6 +99,10 @@ io.on("connection", socket => {
     socket.to(socket.room).emit("loveMessage", message);
   });
 
+  socket.on("changeNumber", number => {
+    socket.to(socket.room).emit("changeNumber", number);
+  })
+
   socket.on("disconnect", () => {
     if (!roomsOnline[socket.room]) return;
     roomsOnline[socket.room].splice(
