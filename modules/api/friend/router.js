@@ -32,7 +32,6 @@ router.post(
             res.send("nick da block");
             break;
           default:
-            res.send("default");
             break;
         }
       })
@@ -41,7 +40,8 @@ router.post(
         console.error(err);
         res.status(500).send(err);
       });
-  });
+  }
+);
 
 router.get("/list-invitation", authMiddleware.authorize, (req, res) => {
   const { username } = req.session.userInfo;
@@ -60,7 +60,8 @@ router.put(
       .acceptInvitation(req.body.id)
       .then(response => res.send(response))
       .catch(err => res.status(500).send(err));
-  });
+  }
+);
 
 router.put("/reject-invitation", authMiddleware.authorize, (req, res) => {
   friendController
